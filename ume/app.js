@@ -92,39 +92,49 @@ function reveal() {
   speak();
 }
 
-// 正体明かしのキラキラ演出
+// 正体明かしの水玉バースト演出
 function burst() {
   const stage = document.querySelector('.stage');
-  const icons = ['✨', '⭐', '💧'];
-  for (let i = 0; i < 10; i++) {
+  const colors = ['#ffffff', '#ffe082', '#ffab91', '#81d4fa', '#a5d6a7', '#f8bbd0'];
+  for (let i = 0; i < 14; i++) {
     const s = document.createElement('span');
     s.className = 'spark';
-    s.textContent = icons[i % icons.length];
-    const a = i / 10 * Math.PI * 2;
-    s.style.setProperty('--dx', Math.round(Math.cos(a) * 130) + 'px');
-    s.style.setProperty('--dy', Math.round(Math.sin(a) * 130) + 'px');
-    s.style.animationDelay = (i * 0.03) + 's';
+    const size = 8 + Math.round(Math.random() * 12);
+    s.style.width = s.style.height = size + 'px';
+    s.style.background = colors[i % colors.length];
+    const a = i / 14 * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+    const d = 90 + Math.random() * 70;
+    s.style.setProperty('--dx', Math.round(Math.cos(a) * d) + 'px');
+    s.style.setProperty('--dy', Math.round(Math.sin(a) * d) + 'px');
+    s.style.animationDelay = (i * 0.02) + 's';
     stage.appendChild(s);
     setTimeout(() => s.remove(), 1300);
   }
 }
 
-// ---- 音声読み上げ(LINE内ブラウザでの動作検証ポイント) ----
-const VOICE_TEXT = 'ドクターフィッシュ! おんせんで ひとの ふるい かわを たべてくれる おさかなだよ!';
+// ---- 音声: 収録した子どもの声のみを使う(合成音声は使わない方針・2026-07-04確定) ----
+// iPhoneボイスメモのm4aをそのまま置けるよう、m4a→mp3の順で探す
+const VOICE_SOURCES = ['audio/reveal-0.m4a', 'audio/reveal-0.mp3'];
+let revealAudio = null;
+
 function speak() {
-  if (!('speechSynthesis' in window)) {
-    $('#voiceNote').textContent = '※この環境では音声読み上げが使えません';
+  if (revealAudio) {
+    revealAudio.currentTime = 0;
+    revealAudio.play().catch(() => {});
     return;
   }
-  try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(VOICE_TEXT);
-    u.lang = 'ja-JP';
-    u.rate = 0.9;
-    speechSynthesis.speak(u);
-  } catch (e) {
-    $('#voiceNote').textContent = '※音声読み上げでエラーが発生しました';
+  tryPlay(0);
+}
+
+function tryPlay(i) {
+  if (i >= VOICE_SOURCES.length) {
+    $('#voiceNote').textContent = '※こえは じゅんびちゅう';
+    return;
   }
+  const a = new Audio(VOICE_SOURCES[i]);
+  a.play()
+    .then(() => { revealAudio = a; $('#voiceNote').textContent = ''; })
+    .catch(() => tryPlay(i + 1));
 }
 $('#voiceBtn').onclick = speak;
 
