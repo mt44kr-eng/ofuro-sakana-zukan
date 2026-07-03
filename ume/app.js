@@ -88,7 +88,25 @@ iceSvg.addEventListener('click', () => {
 function reveal() {
   $('#iceWrap').classList.add('hidden');
   $('#reveal').classList.remove('hidden');
+  burst();
   speak();
+}
+
+// 正体明かしのキラキラ演出
+function burst() {
+  const stage = document.querySelector('.stage');
+  const icons = ['✨', '⭐', '💧'];
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('span');
+    s.className = 'spark';
+    s.textContent = icons[i % icons.length];
+    const a = i / 10 * Math.PI * 2;
+    s.style.setProperty('--dx', Math.round(Math.cos(a) * 130) + 'px');
+    s.style.setProperty('--dy', Math.round(Math.sin(a) * 130) + 'px');
+    s.style.animationDelay = (i * 0.03) + 's';
+    stage.appendChild(s);
+    setTimeout(() => s.remove(), 1300);
+  }
 }
 
 // ---- 音声読み上げ(LINE内ブラウザでの動作検証ポイント) ----

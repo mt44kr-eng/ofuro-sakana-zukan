@@ -21,12 +21,13 @@ const embCache = new Map();
 const standalone = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
 $('#standaloneBadge').textContent = standalone ? 'ホーム画面起動: ✅' : 'ブラウザ表示中';
 
-// しきい値: 実測(同一物0.70〜0.74 / 別物0.51〜0.57)の中間
+// しきい値: フィギュア実測(同一0.91〜0.96 / 別物0.59〜0.67)の中間
+// キー名をth2に変更して旧初期値(0.64)を上書き
 const th = $('#th');
-th.value = store.get('th', 0.64);
+th.value = store.get('th2', 0.79);
 function syncTh() {
   $('#thVal').textContent = Number(th.value).toFixed(2);
-  store.set('th', Number(th.value));
+  store.set('th2', Number(th.value));
 }
 th.oninput = syncTh;
 syncTh();
