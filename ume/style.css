@@ -1,0 +1,90 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+  background: #e3f4fd;
+  color: #1c3d5a;
+}
+.screen { max-width: 480px; margin: 0 auto; padding: 12px 12px 32px; min-height: 100vh; }
+.hidden { display: none !important; }
+
+.top { text-align: center; padding: 12px 0 4px; }
+h1 { font-size: 24px; margin: 0; color: #0277bd; }
+.sub { font-size: 13px; margin: 6px 0 0; color: #4a7ba6; }
+
+.demoCard {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  margin: 14px 0; padding: 14px; border: none; border-radius: 18px;
+  background: linear-gradient(135deg, #ffe082, #ffca28);
+  box-shadow: 0 4px 0 #e6a800; cursor: pointer; text-align: left;
+  font-family: inherit; color: #5d4000;
+}
+.demoCard:active { transform: translateY(2px); box-shadow: 0 2px 0 #e6a800; }
+.iceMini { font-size: 40px; }
+.demoTxt b { font-size: 18px; display: block; }
+.demoTxt small { font-size: 13px; }
+
+.week { border-radius: 18px; padding: 12px; margin: 14px 0; }
+.week.river { background: #d3efd9; }
+.week.sea { background: #cfe8fa; }
+.week.deep { background: #c9cdea; }
+.week h2 { font-size: 16px; margin: 2px 4px 10px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.card {
+  background: rgba(255,255,255,.75); border-radius: 14px; padding: 8px 6px 6px;
+  text-align: center; position: relative;
+}
+.card svg { width: 100%; height: 64px; color: #35506b; }
+.deep .card svg { color: #2b3560; }
+.num {
+  position: absolute; top: 6px; left: 6px;
+  background: #fff; border-radius: 10px; font-size: 11px; font-weight: 700;
+  padding: 2px 7px; color: #4a7ba6;
+}
+.qmark { font-size: 13px; color: #7d9cb8; display: block; margin-top: 2px; }
+
+.quality { background: #fff; border-radius: 18px; padding: 16px; margin-top: 20px; }
+.quality h2 { font-size: 16px; margin: 0 0 8px; color: #0277bd; }
+.quality p { font-size: 14px; line-height: 1.7; }
+.ph {
+  background: #eef3f7; border: 2px dashed #b7c9d8; border-radius: 12px;
+  padding: 34px 10px; text-align: center; color: #7d95a9; font-size: 14px; margin: 10px 0;
+}
+.lineBtn {
+  display: block; text-align: center; background: #06c755; color: #fff;
+  font-size: 17px; font-weight: 700; padding: 15px; border-radius: 14px;
+  margin-top: 14px; cursor: pointer; text-decoration: none;
+  box-shadow: 0 3px 0 #059a43;
+}
+.lineBtn:active { transform: translateY(2px); box-shadow: 0 1px 0 #059a43; }
+.hint { font-size: 12px; color: #7d95a9; text-align: center; min-height: 1em; }
+.foot { text-align: center; font-size: 12px; color: #9ab4c8; margin-top: 24px; }
+
+/* デモ画面 */
+.back {
+  background: #fff; border: none; border-radius: 12px; padding: 10px 14px;
+  font-size: 15px; color: #0277bd; cursor: pointer; font-family: inherit;
+}
+.stage { text-align: center; padding-top: 20px; }
+#iceWrap svg { width: min(78vw, 320px); cursor: pointer; }
+.tapHint { font-size: 18px; font-weight: 700; color: #0277bd; animation: bounce 1.2s infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.shake { animation: shake .35s; }
+@keyframes shake {
+  0%,100% { transform: translate(0,0) rotate(0); }
+  25% { transform: translate(-5px,2px) rotate(-2deg); }
+  50% { transform: translate(5px,-2px) rotate(2deg); }
+  75% { transform: translate(-3px,1px) rotate(-1deg); }
+}
+#reveal { animation: pop .5s; }
+@keyframes pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+.fishArt { width: min(70vw, 300px); }
+.fishName { font-size: 30px; color: #0277bd; margin: 8px 0; }
+.trivia { font-size: 17px; line-height: 1.8; }
+.voice {
+  background: #ff7043; color: #fff; border: none; border-radius: 16px;
+  font-size: 18px; font-weight: 700; padding: 14px 26px; margin: 10px 0 4px;
+  cursor: pointer; box-shadow: 0 3px 0 #d84f26; font-family: inherit;
+}
+.voice:active { transform: translateY(2px); box-shadow: 0 1px 0 #d84f26; }

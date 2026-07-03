@@ -42,14 +42,11 @@
 
   <section>
     <h2>設定</h2>
-    <label class="row"><input type="checkbox" id="mnetChk"> MobileNetも使う <span id="mnetStatus" class="hint"></span></label>
-    <p class="hint">※初回のみ約3MBをダウンロードします(通信が必要)</p>
-    <label class="row">色ヒストグラムしきい値
-      <input type="range" id="histTh" min="0" max="1" step="0.01"> <b id="histThVal"></b>
+    <p class="row">照合エンジン: MobileNet <span id="modelStatus" class="hint"></span></p>
+    <label class="row">しきい値
+      <input type="range" id="th" min="0" max="1" step="0.01"> <b id="thVal"></b>
     </label>
-    <label class="row">MobileNetしきい値
-      <input type="range" id="mnetTh" min="0" max="1" step="0.01"> <b id="mnetThVal"></b>
-    </label>
+    <p class="hint">実測(2026-07-03): 同一物 0.70〜0.74 / 別物 0.51〜0.57 → 初期値 0.64</p>
   </section>
 
   <section>
@@ -63,7 +60,6 @@
   </section>
 </main>
 
-<script src="js/matcher-histogram.js"></script>
 <script src="js/matcher-mobilenet.js"></script>
 <script src="js/camera.js"></script>
 <script src="js/app.js"></script>

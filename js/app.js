@@ -6,35 +6,44 @@ const camStatus = $('#camStatus');
 const resultBox = $('#result');
 const historyBox = $('#history');
 const refList = $('#refList');
-const mnetChk = $('#mnetChk');
-const mnetStatus = $('#mnetStatus');
+const modelStatus = $('#modelStatus');
 
 const store = {
   get(k, d) { try { const v = localStorage.getItem('spike-' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem('spike-' + k, JSON.stringify(v)); } catch (e) {} }
 };
 
-// 基準写真はサムネイル(dataURL)だけ保存し、特徴量は必要時に再計算してメモリにキャッシュ
+// 基準写真はサムネイル(dataURL)だけ保存し、特徴量は必要時に計算してメモリにキャッシュ
 let refs = store.get('refs', []);
-const featCache = new Map();
+const embCache = new Map();
 
 // ホーム画面起動かどうかの表示(ステップ1の検証ポイント)
 const standalone = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
 $('#standaloneBadge').textContent = standalone ? 'ホーム画面起動: ✅' : 'ブラウザ表示中';
 
-// しきい値スライダー
-const histTh = $('#histTh'), mnetTh = $('#mnetTh');
-histTh.value = store.get('histTh', 0.6);
-mnetTh.value = store.get('mnetTh', 0.75);
+// しきい値: 実測(同一物0.70〜0.74 / 別物0.51〜0.57)の中間
+const th = $('#th');
+th.value = store.get('th', 0.64);
 function syncTh() {
-  $('#histThVal').textContent = Number(histTh.value).toFixed(2);
-  $('#mnetThVal').textContent = Number(mnetTh.value).toFixed(2);
-  store.set('histTh', Number(histTh.value));
-  store.set('mnetTh', Number(mnetTh.value));
+  $('#thVal').textContent = Number(th.value).toFixed(2);
+  store.set('th', Number(th.value));
 }
-histTh.oninput = syncTh;
-mnetTh.oninput = syncTh;
+th.oninput = syncTh;
 syncTh();
+
+async function ensureModel() {
+  if (MobileNetMatcher.isLoaded()) { modelStatus.textContent = '(準備OK)'; return true; }
+  modelStatus.textContent = '(読み込み中… 初回は約3MB)';
+  try {
+    await MobileNetMatcher.load();
+    modelStatus.textContent = '(準備OK)';
+    return true;
+  } catch (e) {
+    modelStatus.textContent = '(読み込み失敗。通信環境を確認してください)';
+    return false;
+  }
+}
+ensureModel();
 
 async function startCamera() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -71,15 +80,24 @@ function toThumb(canvas) {
   return c.toDataURL('image/jpeg', 0.85);
 }
 
-async function getFeatures(thumb, wantEmb) {
-  let f = featCache.get(thumb);
-  if (!f) { f = {}; featCache.set(thumb, f); }
-  if (!f.hist || (wantEmb && !f.emb)) {
+async function refEmb(thumb) {
+  let e = embCache.get(thumb);
+  if (!e) {
     const img = await loadImage(thumb);
-    if (!f.hist) f.hist = HistMatcher.feature(img);
-    if (wantEmb && !f.emb) f.emb = await MobileNetMatcher.feature(img);
+    e = await MobileNetMatcher.feature(img);
+    embCache.set(thumb, e);
   }
-  return f;
+  return e;
+}
+
+function cropCenter(img, ratio) {
+  const w = img.naturalWidth || img.width;
+  const h = img.naturalHeight || img.height;
+  const s = Math.min(w, h) * ratio;
+  const c = document.createElement('canvas');
+  c.width = 224; c.height = 224;
+  c.getContext('2d').drawImage(img, (w - s) / 2, (h - s) / 2, s, s, 0, 0, 224, 224);
+  return c;
 }
 
 function renderRefs() {
@@ -112,27 +130,6 @@ $('#clearRefs').onclick = () => {
   }
 };
 
-// MobileNetの有効化(初回はCDNからダウンロード)
-mnetChk.checked = store.get('useMnet', false);
-async function ensureMnet() {
-  if (MobileNetMatcher.isLoaded()) { mnetStatus.textContent = '(準備OK)'; return true; }
-  mnetStatus.textContent = '(読み込み中…)';
-  try {
-    await MobileNetMatcher.load();
-    mnetStatus.textContent = '(準備OK)';
-    return true;
-  } catch (e) {
-    mnetStatus.textContent = '(読み込み失敗。通信環境を確認してください)';
-    return false;
-  }
-}
-mnetChk.onchange = () => {
-  store.set('useMnet', mnetChk.checked);
-  if (mnetChk.checked) ensureMnet();
-  else mnetStatus.textContent = '';
-};
-if (mnetChk.checked) ensureMnet();
-
 let busy = false;
 async function handleCanvas(canvas) {
   if (busy) return;
@@ -161,42 +158,37 @@ async function judge(thumb) {
     flash('先に「基準を登録」で写真を1枚以上登録してください');
     return;
   }
-  const useM = mnetChk.checked && await ensureMnet();
+  if (!await ensureModel()) {
+    flash('照合エンジンを読み込めませんでした');
+    return;
+  }
   resultBox.innerHTML = '<p class="hint">計算中…</p>';
-  const q = await getFeatures(thumb, useM);
-  let histBest = 0;
-  let mnetBest = useM ? -1 : null;
+  const img = await loadImage(thumb);
+  // 子どもの写真は距離・フレーミングが揺れるので、全体と中央寄りの2通りで照合し高い方を採用
+  const queries = [
+    await MobileNetMatcher.feature(img),
+    await MobileNetMatcher.feature(cropCenter(img, 0.72))
+  ];
+  let best = -1;
   for (const r of refs) {
-    const f = await getFeatures(r.thumb, useM);
-    histBest = Math.max(histBest, HistMatcher.similarity(q.hist, f.hist));
-    if (useM) mnetBest = Math.max(mnetBest, MobileNetMatcher.similarity(q.emb, f.emb));
+    const e = await refEmb(r.thumb);
+    for (const q of queries) best = Math.max(best, MobileNetMatcher.similarity(q, e));
   }
-  showResult(thumb, histBest, mnetBest);
+  showResult(thumb, best);
 }
 
-function scoreRow(label, score, th) {
-  if (score === null) {
-    return '<div class="scoreRow off"><span>' + label + '</span><span class="hint">未使用</span></div>';
-  }
-  const ok = score >= th;
+function showResult(thumb, score) {
+  const ok = score >= Number(th.value);
   const pct = Math.max(0, Math.min(100, Math.round(score * 100)));
-  return '<div class="scoreRow"><span>' + label + '</span>' +
-    '<div class="bar"><i class="' + (ok ? 'ok' : 'ng') + '" style="width:' + pct + '%"></i></div>' +
-    '<b>' + score.toFixed(2) + '</b>' +
-    '<span class="verdict ' + (ok ? 'ok' : 'ng') + '">' + (ok ? '○' : '△') + '</span></div>';
-}
-
-function showResult(thumb, hist, mnet) {
   resultBox.innerHTML =
     '<div class="judgeCard"><img src="' + thumb + '" alt="判定画像">' +
-    '<div class="scores">' +
-    scoreRow('色ヒストグラム', hist, Number(histTh.value)) +
-    scoreRow('MobileNet', mnet, Number(mnetTh.value)) +
-    '</div></div>';
+    '<div class="scores"><div class="scoreRow"><span>MobileNet</span>' +
+    '<div class="bar"><i class="' + (ok ? 'ok' : 'ng') + '" style="width:' + pct + '%"></i></div>' +
+    '<b>' + score.toFixed(2) + '</b>' +
+    '<span class="verdict ' + (ok ? 'ok' : 'ng') + '">' + (ok ? '○' : '△') + '</span></div></div></div>';
   const item = document.createElement('div');
   item.className = 'histItem';
-  item.innerHTML = '<img src="' + thumb + '"><span>色: ' + hist.toFixed(2) +
-    (mnet !== null ? ' / MobileNet: ' + mnet.toFixed(2) : '') + '</span>';
+  item.innerHTML = '<img src="' + thumb + '"><span>スコア: ' + score.toFixed(2) + (ok ? ' ○' : ' △') + '</span>';
   historyBox.prepend(item);
   while (historyBox.children.length > 12) historyBox.lastChild.remove();
 }
