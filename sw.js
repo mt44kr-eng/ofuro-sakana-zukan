@@ -1,6 +1,6 @@
 // 検証用Service Worker: ネットワーク優先+キャッシュフォールバック
 // (開発中に古いキャッシュが残らないようネットワーク優先。オフライン時はキャッシュで動く)
-const CACHE = 'ofuro-spike-v1';
+const CACHE = 'mizu-v1';
 
 self.addEventListener('install', () => self.skipWaiting());
 

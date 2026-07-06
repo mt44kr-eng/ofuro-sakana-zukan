@@ -1,0 +1,206 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: "Zen Maru Gothic", -apple-system, "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+  background: linear-gradient(180deg, #e3f7ff 0%, #bce8fb 55%, #9edcf7 100%);
+  background-attachment: fixed;
+  color: #23527c;
+  min-height: 100vh;
+}
+.screen {
+  max-width: 480px; margin: 0 auto;
+  padding: calc(12px + env(safe-area-inset-top)) 14px 40px;
+  position: relative; z-index: 1;
+}
+.hidden { display: none !important; }
+
+/* ---- ふわふわ泡 ---- */
+.bubbles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.bubbles span {
+  position: absolute; bottom: -70px; border-radius: 50%;
+  background: rgba(255,255,255,.35);
+  border: 2px solid rgba(255,255,255,.65);
+  animation: rise linear infinite;
+}
+.bubbles span:nth-child(1) { left: 8%;  width: 20px; height: 20px; animation-duration: 12s; }
+.bubbles span:nth-child(2) { left: 24%; width: 12px; height: 12px; animation-duration: 9s;  animation-delay: 2s; }
+.bubbles span:nth-child(3) { left: 42%; width: 26px; height: 26px; animation-duration: 14s; animation-delay: 5s; }
+.bubbles span:nth-child(4) { left: 60%; width: 10px; height: 10px; animation-duration: 8s;  animation-delay: 1s; }
+.bubbles span:nth-child(5) { left: 76%; width: 18px; height: 18px; animation-duration: 11s; animation-delay: 4s; }
+.bubbles span:nth-child(6) { left: 90%; width: 14px; height: 14px; animation-duration: 10s; animation-delay: 7s; }
+@keyframes rise { to { transform: translateY(-115vh); } }
+
+/* ---- ヘッダー ---- */
+.top { text-align: center; padding: 14px 0 6px; }
+h1 {
+  font-size: 26px; margin: 0; color: #0277bd; letter-spacing: 1px;
+  text-shadow: 0 2px 0 #fff, 0 4px 10px rgba(2,119,189,.2);
+}
+.sub {
+  display: inline-block; background: #fff; border-radius: 999px;
+  padding: 7px 16px; font-size: 13px; color: #4a90c2; margin-top: 10px;
+  box-shadow: 0 3px 8px rgba(2,119,189,.15);
+}
+.tierBadge {
+  background: #ffb300; color: #fff; border-radius: 999px;
+  font-size: 11px; font-weight: 700; padding: 2px 9px; margin-left: 4px;
+}
+
+/* ---- デモカード ---- */
+.demoCard {
+  display: flex; align-items: center; gap: 14px; width: 100%;
+  margin: 18px 0; padding: 16px; border: none; border-radius: 24px;
+  background: linear-gradient(135deg, #ffe082, #ffb74d);
+  box-shadow: 0 5px 0 #e69900, 0 10px 18px rgba(230,153,0,.30);
+  cursor: pointer; text-align: left; font-family: inherit; color: #6b4a00;
+  position: relative; animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+.demoCard:active { transform: scale(.97); box-shadow: 0 2px 0 #e69900; animation: none; }
+.iceMini { font-size: 44px; filter: drop-shadow(0 3px 3px rgba(0,0,0,.15)); }
+.demoTxt b { font-size: 19px; display: block; }
+.demoTxt small { font-size: 13px; }
+.sparkle { position: absolute; top: -8px; right: 12px; width: 34px; height: 32px; }
+.sparkle i {
+  position: absolute; border-radius: 50%;
+  animation: twinkle 1.6s ease-in-out infinite;
+  box-shadow: 0 1px 3px rgba(0,0,0,.12);
+}
+.sparkle i:nth-child(1) { width: 13px; height: 13px; left: 0; top: 9px; background: #fff; }
+.sparkle i:nth-child(2) { width: 9px; height: 9px; right: 2px; top: 0; background: #81d4fa; animation-delay: .3s; }
+.sparkle i:nth-child(3) { width: 7px; height: 7px; right: 7px; bottom: 0; background: #f8bbd0; animation-delay: .7s; }
+@keyframes twinkle { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.35); opacity: .6; } }
+
+/* ---- ゾーンセクション ---- */
+.week {
+  border-radius: 24px; padding: 14px 12px 16px; margin: 18px 0;
+  box-shadow: 0 5px 16px rgba(35,82,124,.12);
+}
+.week.river   { background: linear-gradient(160deg, #e4f9e8, #bfeccb); }
+.week.ocean   { background: linear-gradient(160deg, #dbf0fe, #a9dbf8); }
+.week.deepsea { background: linear-gradient(160deg, #d3d7f4, #a3a9e4); }
+.week.secret  { background: linear-gradient(160deg, #efe2f7, #d5b8e8); }
+.week h2 {
+  display: inline-block; background: #fff; border-radius: 999px;
+  padding: 7px 18px; font-size: 15px; margin: 0 0 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.card {
+  background: #fff; border-radius: 18px; padding: 12px 6px 8px;
+  text-align: center; position: relative;
+  box-shadow: 0 4px 10px rgba(2,119,189,.12);
+  transition: transform .12s;
+}
+.card:active { transform: scale(.93); }
+.card .art { height: 62px; color: #38607f; }
+.card .art svg { width: 100%; height: 100%; }
+.card .art .illust { width: 100%; height: 100%; object-fit: contain; }
+.deepsea .card .art { color: #2b3560; }
+.card.collected { box-shadow: 0 4px 10px rgba(255,179,0,.35); outline: 2px solid #ffd54f; }
+.num {
+  position: absolute; top: -8px; left: -5px;
+  background: #ffb300; color: #fff; border-radius: 999px;
+  font-size: 12px; font-weight: 700; padding: 3px 9px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.18); transform: rotate(-8deg);
+}
+.qmark {
+  display: inline-block; background: #eaf4fb; border-radius: 999px;
+  font-size: 12px; color: #7d9cb8; padding: 2px 10px; margin-top: 4px;
+}
+.name {
+  display: inline-block; background: #fff3d6; border-radius: 999px;
+  font-size: 11px; color: #8a6100; font-weight: 700; padding: 2px 8px; margin-top: 4px;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ---- 品質証明(梅のみ) ---- */
+.quality {
+  background: #fff; border-radius: 24px; padding: 18px 16px; margin-top: 22px;
+  box-shadow: 0 5px 16px rgba(35,82,124,.12);
+}
+.quality h2 {
+  display: inline-block; background: #e3f4fd; border-radius: 999px;
+  font-size: 15px; margin: 0 0 10px; color: #0277bd; padding: 7px 18px;
+}
+.quality p { font-size: 14px; line-height: 1.8; }
+.ph {
+  background: #f2f8fc; border: 3px dashed #b7d5e8; border-radius: 16px;
+  padding: 36px 10px; text-align: center; color: #7d9cb8; font-size: 14px; margin: 12px 0;
+}
+.lineBtn {
+  display: block; text-align: center; background: #06c755; color: #fff;
+  font-size: 17px; font-weight: 700; padding: 16px; border-radius: 999px;
+  margin-top: 16px; cursor: pointer; text-decoration: none;
+  box-shadow: 0 4px 0 #059a43, 0 8px 14px rgba(5,154,67,.25);
+  transition: transform .1s;
+}
+.lineBtn:active { transform: translateY(3px); box-shadow: 0 1px 0 #059a43; }
+.hint { font-size: 12px; color: #7d9cb8; text-align: center; min-height: 1em; }
+.foot { text-align: center; font-size: 12px; color: #8fb4cd; margin-top: 26px; }
+
+/* ---- デモ(氷割り)画面 ---- */
+.back {
+  background: #fff; border: none; border-radius: 999px; padding: 11px 18px;
+  font-size: 15px; color: #0277bd; cursor: pointer; font-family: inherit;
+  box-shadow: 0 3px 8px rgba(2,119,189,.15);
+}
+.back:active { transform: scale(.95); }
+.stage { text-align: center; padding-top: 24px; position: relative; }
+#iceWrap svg {
+  width: min(78vw, 320px); cursor: pointer;
+  filter: drop-shadow(0 10px 14px rgba(2,119,189,.28));
+}
+.tapHint {
+  display: inline-block; background: #fff; border-radius: 999px;
+  padding: 10px 22px; font-size: 18px; font-weight: 700; color: #0277bd;
+  box-shadow: 0 3px 10px rgba(2,119,189,.18);
+  animation: bounce 1.2s infinite;
+}
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.shake { animation: shake .35s; }
+@keyframes shake {
+  0%,100% { transform: translate(0,0) rotate(0); }
+  25% { transform: translate(-6px,2px) rotate(-2deg); }
+  50% { transform: translate(6px,-2px) rotate(2deg); }
+  75% { transform: translate(-3px,1px) rotate(-1deg); }
+}
+#reveal { animation: pop .5s; }
+@keyframes pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+.foundBadge {
+  display: inline-block; background: #ff7043; color: #fff;
+  font-size: 15px; font-weight: 700; border-radius: 999px; padding: 6px 18px;
+  transform: rotate(-6deg); box-shadow: 0 3px 8px rgba(216,79,38,.35);
+}
+.fishArt { width: min(68vw, 290px); filter: drop-shadow(0 6px 10px rgba(2,119,189,.2)); }
+.revealArt { width: min(60vw, 260px); }
+.fishName {
+  display: inline-block; background: #fff; border-radius: 999px;
+  font-size: 27px; color: #0277bd; margin: 10px 0 6px; padding: 8px 26px;
+  box-shadow: 0 4px 12px rgba(2,119,189,.18);
+}
+.trivia {
+  background: rgba(255,255,255,.85); border-radius: 18px;
+  font-size: 17px; line-height: 1.9; padding: 12px 16px; margin: 10px auto;
+  max-width: 320px;
+}
+.voice {
+  background: #ff7043; color: #fff; border: none; border-radius: 999px;
+  font-size: 18px; font-weight: 700; padding: 15px 30px; margin: 10px 0 4px;
+  cursor: pointer; font-family: inherit;
+  box-shadow: 0 4px 0 #d84f26, 0 8px 14px rgba(216,79,38,.25);
+  transition: transform .1s;
+}
+.voice:active { transform: translateY(3px); box-shadow: 0 1px 0 #d84f26; }
+
+/* 水玉バースト */
+.spark {
+  position: absolute; left: 50%; top: 32%; border-radius: 50%;
+  pointer-events: none; animation: fly .9s ease-out forwards;
+  box-shadow: 0 1px 3px rgba(0,0,0,.10);
+}
+@keyframes fly {
+  from { transform: translate(0,0) scale(.6); opacity: 1; }
+  to { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0; }
+}
