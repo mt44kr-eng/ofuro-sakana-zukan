@@ -37,8 +37,46 @@
   <footer class="foot">みつけた！みずのなかま</footer>
 </div>
 
+<!-- 0番デモ(氷割り) -->
+<div id="demo" class="screen hidden">
+  <button class="back" id="backBtn">← ずかんに もどる</button>
+  <div class="stage">
+    <div id="iceWrap">
+      <svg id="iceSvg" viewBox="0 0 220 220" aria-label="こおり">
+        <g id="iceBody">
+          <polygon points="30,50 110,18 190,50 200,150 110,202 20,150"
+                   fill="#bfe6f7" stroke="#8fd0ee" stroke-width="4"/>
+          <polygon points="45,60 110,36 175,60 182,145 110,184 38,145"
+                   fill="#d9f1fb" opacity="0.8"/>
+          <g fill="#356" opacity="0.55">
+            <ellipse cx="105" cy="115" rx="42" ry="20"/>
+            <polygon points="142,115 168,98 168,132"/>
+          </g>
+          <g id="cracks" stroke="#5aa7cc" stroke-width="3" fill="none" stroke-linecap="round">
+            <path d="M110,30 L98,70 L112,105" class="crack hidden"/>
+            <path d="M40,70 L80,95 L75,130 M180,75 L140,100" class="crack hidden"/>
+            <path d="M110,105 L95,150 L110,185 M112,105 L150,140 L145,175" class="crack hidden"/>
+          </g>
+        </g>
+      </svg>
+      <p class="tapHint" id="tapHint">こおりを タップ!</p>
+    </div>
+
+    <div id="reveal" class="hidden">
+      <span class="foundBadge">みつけた！</span><br>
+      <div id="revealArtWrap"></div>
+      <h2 class="fishName" id="revealName"></h2>
+      <p class="trivia" id="revealFact"></p>
+      <button id="voiceBtn" class="voice">🔊 もういちど きく</button>
+      <p class="hint" id="voiceNote"></p>
+      <p class="hint">ほんものの ずかんでは、まいにち あたらしい なかまに あえるよ</p>
+    </div>
+  </div>
+</div>
+
 <script src="js/storage.js"></script>
 <script src="js/main.js"></script>
+<script src="js/demo.js"></script>
 <script>
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
