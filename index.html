@@ -26,6 +26,7 @@
   <header class="top">
     <h1>みつけた！みずのなかま</h1>
     <p class="sub">みずの いきもの ずかん <span id="tierBadge" class="tierBadge"></span></p>
+    <button id="gearBtn" class="gear" aria-label="おうちのかたメニュー">⚙</button>
   </header>
 
   <div id="demoSlot"></div>
@@ -35,6 +36,23 @@
   <div id="extraSlot"></div>
 
   <footer class="foot">みつけた！みずのなかま</footer>
+</div>
+
+<!-- おうちのかた画面(⚙を長押しで開く) -->
+<div id="parent" class="screen hidden">
+  <button class="back" id="parentBack">← もどる</button>
+  <section class="panel">
+    <h2>きょうの ばんごう</h2>
+    <p id="todayNum" class="todayNum"></p>
+    <p class="hint">この番号のフィギュアを氷にセットしてください。お子さんには番号だけ見せてもOKです(正体は出ません)</p>
+  </section>
+  <section class="panel">
+    <h2>プラン</h2>
+    <p class="parentRow">現在: <b id="parentTier"></b></p>
+    <input id="pwInput" class="pwInput" type="text" placeholder="カードのパスワードを入力" autocomplete="off" autocapitalize="characters">
+    <button id="pwBtn" class="primary">解錠する</button>
+    <p class="hint" id="pwNote"></p>
+  </section>
 </div>
 
 <!-- 0番デモ(氷割り) -->
@@ -78,6 +96,7 @@
 <script src="js/voice.js"></script>
 <script src="js/main.js"></script>
 <script src="js/demo.js"></script>
+<script src="js/parent.js"></script>
 <script>
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>
