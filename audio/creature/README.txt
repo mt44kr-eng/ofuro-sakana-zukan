@@ -1,20 +1,22 @@
-収録音声(子どもの声)の置き場所
+収録音声(子どもの声)の置き場所と納品ルール
 
-■ ファイル名の規則(idは data/creatures.json 参照)
-- {id}.m4a または {id}.mp3 (m4a優先で探すので、iPhoneボイスメモのままでOK)
-- 例: doctor_fish.m4a / koi.m4a / giant_isopod.m4a
+■ 構成(切り出し納品方式)
+- audio/common/mitsuketa.m4a : 共通の「みつけた！」クリップ(全生き物で使い回し)
+- audio/creature/{id}.m4a    : 各生き物の「名前＋豆知識」クリップ
+  ※「みつけた！」は入れない(アプリが共通クリップ→生き物クリップの順に連続再生)
+  例: doctor_fish.m4a の中身 =「ドクターフィッシュ！ おんせんで ひとの ふるい かわを たべてくれる おさかなだよ！」
 
-■ ゾーン完了・グランド完了音声(別フォルダ)
-- audio/zone/river.mp3, ocean.mp3, deepsea.mp3
-- audio/grand/take.mp3, matsu.mp3
+■ ファイル名(idは data/creatures.json 参照)
+- {id}.m4a または {id}.mp3 (m4a優先。iPhoneボイスメモのままでOK)
+- Windowsは拡張子が隠れて「.m4a.m4a」と二重になりやすいので注意
+
+■ ゾーン完了・グランド完了音声(フェーズ4で使用)
+- audio/zone/river.m4a, ocean.m4a, deepsea.m4a
+- audio/grand/take.m4a, matsu.m4a
 - いずれも「コンプリート！」のみ(ゾーン名の前置は可)
 
 ■ 台本
-data/creatures.json の line がそのまま音声原稿です。
-
-■ 進め方(仕様書 §7)
-まず doctor_fish 1本だけ入れて、形式・音量・再生タイミングを実機確認
-→ OKなら残りを一括収録・投入
+data/creatures.json の line が原稿(先頭の「みつけた！」は共通クリップ側)。
 
 ■ 録音のコツ
 - 静かな部屋で、口から15cmくらい離して録る

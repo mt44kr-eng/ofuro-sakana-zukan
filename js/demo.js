@@ -20,7 +20,6 @@ const FALLBACK_ART =
 
 let creature = null;
 let taps = 0;
-let voiceAudio = null;
 
 document.addEventListener('data-ready', setup);
 
@@ -130,26 +129,12 @@ function burst() {
   }
 }
 
-// 収録音声(子どもの声)のみ再生。m4a→mp3の順で探し、無ければ準備中表示
+// 「みつけた！」共通クリップ→ドクターフィッシュのセリフを連続再生
 function speak() {
-  if (voiceAudio) {
-    voiceAudio.currentTime = 0;
-    voiceAudio.play().catch(() => {});
-    return;
-  }
-  tryPlay(['audio/creature/' + DEMO_ID + '.m4a', 'audio/creature/' + DEMO_ID + '.mp3'], 0);
-}
-
-function tryPlay(sources, i) {
-  if (i >= sources.length) {
+  $('#voiceNote').textContent = '';
+  Voice.playFound(DEMO_ID, () => {
     $('#voiceNote').textContent = '※こえは じゅんびちゅう';
-    return;
-  }
-  const a = new Audio(sources[i]);
-  a.volume = Storage.get('settings').volume;
-  a.play()
-    .then(() => { voiceAudio = a; $('#voiceNote').textContent = ''; })
-    .catch(() => tryPlay(sources, i + 1));
+  });
 }
 $('#voiceBtn').onclick = speak;
 })();
