@@ -21,7 +21,9 @@ const FALLBACK_ART =
 let creature = null;
 let taps = 0;
 
-document.addEventListener('data-ready', setup);
+// データ読み込みがこのスクリプトの実行より先に終わることがあるため、両対応にする
+if (window.App && App.data) setup();
+else document.addEventListener('data-ready', setup);
 
 function setup() {
   creature = App.data.creatures.find(c => c.id === DEMO_ID);

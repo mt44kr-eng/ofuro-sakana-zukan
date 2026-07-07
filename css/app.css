@@ -299,3 +299,18 @@ h1 {
 }
 .revealPlaceholder { width: min(60vw, 260px); margin: 0 auto; color: #38607f; }
 #found .bigGreen { margin-top: 18px; }
+
+/* ---- コンプリート演出 ---- */
+.zoneLabel {
+  display: inline-block; background: #fff; border-radius: 999px;
+  padding: 8px 20px; font-size: 16px; font-weight: 700; color: #0277bd;
+  box-shadow: 0 3px 10px rgba(2,119,189,.18); margin-top: 24px;
+}
+.completeTitle {
+  font-size: 44px; margin: 14px 0 6px; color: #ef6c00; letter-spacing: 2px;
+  text-shadow: 0 3px 0 #fff, 0 6px 14px rgba(239,108,0,.3);
+  animation: pop .5s;
+}
+.completeArt { font-size: 88px; margin: 8px 0; filter: drop-shadow(0 6px 10px rgba(35,82,124,.25)); animation: bounce 1.4s infinite; }
+.completeSub { font-size: 17px; font-weight: 700; color: #23527c; line-height: 1.8; }
+#complete .bigGreen { margin-top: 20px; }

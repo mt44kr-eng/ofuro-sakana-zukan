@@ -16,10 +16,12 @@ let refs = null;    // 基準ベクトル(data/refs/{id}.json)。無ければnul
 let fails = 0;
 let busy = false;
 
-document.addEventListener('data-ready', renderHuntButton);
+// データ読み込みがこのスクリプトの実行より先に終わることがあるため、両対応にする
+if (window.App && App.data) renderHuntButton();
+else document.addEventListener('data-ready', renderHuntButton);
 
 function screens(show) {
-  for (const id of ['zukan', 'ritual', 'shoot', 'found']) {
+  for (const id of ['zukan', 'ritual', 'shoot', 'found', 'complete']) {
     document.getElementById(id).classList.toggle('hidden', id !== show);
   }
   scrollTo(0, 0);
@@ -178,7 +180,91 @@ $('#foundDone').onclick = () => {
   Storage.set('progress', progress);
   App.renderZukan();
   renderHuntButton();
-  screens('zukan');
-  // フェーズ4: ここでゾーン完了/グランド完了の判定・演出を行う
+  celebrationQueue = computeCelebrations();
+  showNextCelebration();
 };
+
+// ---- コンプリート演出(仕様書 §5-2) ----
+// 最後の1種登録の直後に1回だけ発火。既完了ゾーンはzonesDoneフラグで再発火しない
+let celebrationQueue = [];
+const ZONE_NAME = { river: 'かわ', ocean: 'うみ', deepsea: 'しんかい' };
+const ZONE_ART = { river: '🏞', ocean: '🌊', deepsea: '🌑' };
+
+function computeCelebrations() {
+  const progress = Storage.get('progress');
+  const ent = Storage.get('entitlements');
+  const out = [];
+
+  for (const zid of ['river', 'ocean', 'deepsea']) {
+    const zc = App.data.creatures.filter(c => c.zone === zid);
+    if (zc.length && zc.every(c => progress.collected[c.id]) && !progress.zonesDone.includes(zid)) {
+      progress.zonesDone.push(zid);
+      out.push({ kind: 'zone', zone: zid });
+    }
+  }
+
+  const all21 = App.data.creatures
+    .filter(c => c.no >= 1 && c.no <= 21)
+    .every(c => progress.collected[c.id]);
+  const secret = App.data.creatures.find(c => c.no === 22);
+
+  if (!progress.grandDone && all21) {
+    if (ent.tier === 'matsu') {
+      if (secret && progress.collected[secret.id]) {
+        progress.grandDone = true;
+        out.push({ kind: 'grand', key: 'matsu' });
+      } else {
+        // 21体そろった松にはここで22体目の存在をリビール
+        out.push({ kind: 'secretTease' });
+      }
+    } else {
+      progress.grandDone = true;
+      out.push({ kind: 'grand', key: 'take' });
+    }
+  }
+
+  Storage.set('progress', progress);
+  return out;
+}
+
+function showNextCelebration() {
+  const ev = celebrationQueue.shift();
+  if (!ev) { screens('zukan'); return; }
+
+  let label = '', title = 'コンプリート！', sub = '', art = '🎉', voiceBase = null;
+  if (ev.kind === 'zone') {
+    label = ZONE_NAME[ev.zone] + ' ゾーン';
+    art = ZONE_ART[ev.zone];
+    voiceBase = 'audio/zone/' + ev.zone;
+  } else if (ev.kind === 'grand') {
+    label = 'ぜんぶ みつけた！';
+    art = '🏆';
+    voiceBase = 'audio/grand/' + ev.key;
+  } else if (ev.kind === 'secretTease') {
+    title = '…あれ？';
+    sub = 'ひみつの なかまが かくれているみたい…';
+    art = '🗝';
+  }
+
+  $('#completeLabel').textContent = label;
+  $('#completeLabel').classList.toggle('hidden', !label);
+  $('#completeTitle').textContent = title;
+  $('#completeSub').textContent = sub;
+  $('#completeArt').textContent = art;
+  $('#completeVoiceNote').textContent = '';
+  screens('complete');
+
+  const stage = document.querySelector('#complete .stage');
+  App.burst(stage);
+  setTimeout(() => App.burst(stage), 400);
+  setTimeout(() => App.burst(stage), 800);
+
+  if (voiceBase) {
+    Voice.play(voiceBase, () => {
+      $('#completeVoiceNote').textContent = '※こえは じゅんびちゅう';
+    });
+  }
+}
+
+$('#completeNext').onclick = showNextCelebration;
 })();
