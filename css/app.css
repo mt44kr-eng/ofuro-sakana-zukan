@@ -314,3 +314,42 @@ h1 {
 .completeArt { font-size: 88px; margin: 8px 0; filter: drop-shadow(0 6px 10px rgba(35,82,124,.25)); animation: bounce 1.4s infinite; }
 .completeSub { font-size: 17px; font-weight: 700; color: #23527c; line-height: 1.8; }
 #complete .bigGreen { margin-top: 20px; }
+
+/* ---- 設定・データ・リセット ---- */
+.setRow { display: block; font-size: 15px; margin: 12px 0; }
+.setRow input[type=range] { width: 100%; margin-top: 6px; }
+.setRow input[type=checkbox] { transform: scale(1.3); margin-right: 8px; }
+.panel .fileBtn { margin-top: 10px; }
+.danger {
+  width: 100%; padding: 15px; font-size: 16px; font-weight: 700;
+  background: #fff; color: #c62828; border: 2px solid #ef9a9a; border-radius: 999px;
+  cursor: pointer; font-family: inherit;
+}
+.danger:disabled { opacity: .45; }
+.panel + .panel { margin-top: 14px; }
+
+/* ---- 印刷用シート(図鑑PDF) ---- */
+#printSheet { display: none; }
+@media print {
+  body > *:not(#printSheet) { display: none !important; }
+  body { background: #fff !important; color: #234; }
+  #printSheet { display: block; }
+  @page { size: A4; margin: 12mm; }
+  .pTitle { font-size: 18pt; text-align: center; color: #0277bd; margin: 0 0 2mm; }
+  .pMeta { text-align: center; font-size: 9pt; color: #567; margin: 0 0 5mm; }
+  .pGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+  .pCell {
+    border: 1pt solid #b7d5e8; border-radius: 3mm; padding: 3mm 2mm;
+    text-align: center; break-inside: avoid; position: relative;
+  }
+  .pCell img { width: 100%; height: 24mm; object-fit: contain; }
+  .pPh { width: 100%; height: 24mm; color: #38607f; }
+  .pPh svg { width: 100%; height: 100%; }
+  .pNum {
+    position: absolute; top: 1.5mm; left: 1.5mm;
+    font-size: 8pt; font-weight: 700; color: #fff; background: #ffb300;
+    border-radius: 999px; padding: .5mm 2mm;
+  }
+  .pName { display: block; font-size: 10pt; margin-top: 1mm; }
+  .pDesc { font-size: 7pt; line-height: 1.5; margin: 1mm 0 0; color: #456; }
+}

@@ -59,7 +59,15 @@ function todayCreature() {
 
 function renderParent() {
   const ent = Storage.get('entitlements');
+  const settings = Storage.get('settings');
+  const progress = Storage.get('progress');
   $('#parentTier').textContent = TIER_LABEL[ent.tier] || TIER_LABEL.ume;
+
+  $('#bgmChk').checked = settings.bgm;
+  $('#volRange').value = settings.volume;
+  // リセットは全コンプリート後のみ有効(仕様書 §5-4)
+  $('#resetBtn').disabled = !progress.grandDone;
+
   const numEl = $('#todayNum');
   if (ent.tier === 'ume') {
     numEl.textContent = '—';
@@ -75,6 +83,57 @@ function renderParent() {
     numEl.textContent = today.no + ' ばん';
   }
 }
+
+// ---- 設定 ----
+$('#bgmChk').onchange = () => {
+  const s = Storage.get('settings');
+  s.bgm = $('#bgmChk').checked;
+  Storage.set('settings', s);
+  Bgm.sync();
+};
+$('#volRange').oninput = () => {
+  const s = Storage.get('settings');
+  s.volume = Number($('#volRange').value);
+  Storage.set('settings', s);
+  Bgm.sync();
+};
+
+// ---- 図鑑PDF ----
+$('#pdfBtn').onclick = () => { Print.run(); };
+
+// ---- データの書き出し/読み込み ----
+$('#exportBtn').onclick = () => {
+  const blob = new Blob([Storage.exportAll()], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mizu-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  $('#dataNote').textContent = '書き出しました。ファイルを大切に保存してください。';
+};
+$('#importInput').onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      Storage.importAll(reader.result);
+      $('#dataNote').textContent = '読み込みました。画面を更新します…';
+      setTimeout(() => location.reload(), 900);
+    } catch (err) {
+      $('#dataNote').textContent = '読み込めませんでした: ' + err.message;
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
+
+// ---- リセット(収集進捗のみ初期化) ----
+$('#resetBtn').onclick = () => {
+  if (!confirm('本当にリセットしていいですか？\n(みつけた記録だけが消えます。プラン・設定は残ります)')) return;
+  Storage.resetProgress();
+  location.reload();
+};
 
 $('#pwBtn').onclick = () => {
   const raw = $('#pwInput').value || '';

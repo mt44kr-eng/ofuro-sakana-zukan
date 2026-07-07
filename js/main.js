@@ -163,6 +163,7 @@ window.App = Object.assign(window.App || {}, {
   factOf,
   renderZukan,
   placeholderSVG,
+  silhouetteFrom,
   burst
 });
 
