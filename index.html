@@ -29,6 +29,8 @@
     <button id="gearBtn" class="gear" aria-label="おうちのかたメニュー">⚙</button>
   </header>
 
+  <div id="huntSlot"></div>
+
   <div id="demoSlot"></div>
 
   <div id="zones"><p class="hint">よみこみちゅう…</p></div>
@@ -92,11 +94,61 @@
   </div>
 </div>
 
+<!-- キャプチャ: 儀式 -->
+<div id="ritual" class="screen hidden">
+  <button class="back" id="ritualBack">← もどる</button>
+  <div class="stage">
+    <div class="towelScene" aria-hidden="true">
+      <svg viewBox="0 0 200 120" class="towelFish">
+        <ellipse cx="85" cy="65" rx="55" ry="26" fill="#8fd0ee"/>
+        <polygon points="132,65 168,44 168,86" fill="#8fd0ee"/>
+        <circle cx="48" cy="58" r="6" fill="#23527c"/>
+      </svg>
+      <div class="towel"></div>
+    </div>
+    <p class="bigMsg">きょうの なかまを<br>タオルで ふいて あげてね</p>
+    <button id="ritualDone" class="voice">ふけたよ!</button>
+  </div>
+</div>
+
+<!-- キャプチャ: 撮影 -->
+<div id="shoot" class="screen hidden">
+  <button class="back" id="shootBack">← もどる</button>
+  <div class="videoWrap">
+    <video id="huntVideo" playsinline muted autoplay></video>
+    <div class="guide"></div>
+  </div>
+  <p id="shootMsg" class="shootMsg" role="status"></p>
+  <button id="shootBtn" class="bigGreen">📷 とる!</button>
+  <label class="fileBtn hidden" id="shootFileBtn">🖼 しゃしんを えらぶ<input type="file" id="shootFileInput" accept="image/*" hidden></label>
+  <section id="parentCheck" class="panel hidden">
+    <h2>おうちのかたへ</h2>
+    <p>今日の生き物がうまく判定できないようです。写っていることを確認して押してください。</p>
+    <button id="parentOk" class="primary">あっているよ</button>
+  </section>
+</div>
+
+<!-- キャプチャ: みつけた！ -->
+<div id="found" class="screen hidden">
+  <div class="stage">
+    <span class="foundBadge">みつけた！</span><br>
+    <div id="foundArtWrap"></div>
+    <h2 class="fishName" id="foundName"></h2>
+    <p class="trivia" id="foundFact"></p>
+    <button id="foundVoiceBtn" class="voice">🔊 もういちど きく</button>
+    <p class="hint" id="foundVoiceNote"></p>
+    <button id="foundDone" class="bigGreen">ずかんに のせる!</button>
+  </div>
+</div>
+
 <script src="js/storage.js"></script>
 <script src="js/voice.js"></script>
 <script src="js/main.js"></script>
 <script src="js/demo.js"></script>
 <script src="js/parent.js"></script>
+<script src="js/matcher-mobilenet.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/capture.js"></script>
 <script>
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 </script>

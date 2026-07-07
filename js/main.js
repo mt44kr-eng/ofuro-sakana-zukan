@@ -132,16 +132,39 @@ async function init() {
     $('#zones').innerHTML = '<p class="hint">データを よみこめませんでした。つうしんかんきょうを かくにんしてね</p>';
     return;
   }
+  window.App.data = DATA;
   renderZukan();
   document.dispatchEvent(new CustomEvent('data-ready'));
 }
 
-// 他モジュール(デモ等)から参照できるように公開
-window.App = {
-  get data() { return DATA; },
+// 水玉バースト演出(デモ・みつけた！画面で共用)
+function burst(stage) {
+  const colors = ['#ffffff', '#ffe082', '#ffab91', '#81d4fa', '#a5d6a7', '#f8bbd0'];
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement('span');
+    s.className = 'spark';
+    const size = 8 + Math.round(Math.random() * 12);
+    s.style.width = s.style.height = size + 'px';
+    s.style.background = colors[i % colors.length];
+    const a = i / 14 * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+    const d = 90 + Math.random() * 70;
+    s.style.setProperty('--dx', Math.round(Math.cos(a) * d) + 'px');
+    s.style.setProperty('--dy', Math.round(Math.sin(a) * d) + 'px');
+    s.style.animationDelay = (i * 0.02) + 's';
+    stage.appendChild(s);
+    setTimeout(() => s.remove(), 1300);
+  }
+}
+
+// 他モジュール(デモ・キャプチャ等)から参照できるように公開
+// (App.data は init() でデータ読み込み後に代入される)
+window.App = Object.assign(window.App || {}, {
+  data: null,
   factOf,
-  renderZukan
-};
+  renderZukan,
+  placeholderSVG,
+  burst
+});
 
 init();
 })();

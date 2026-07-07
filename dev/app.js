@@ -131,6 +131,25 @@ $('#clearRefs').onclick = () => {
   }
 };
 
+// 登録済み基準写真の特徴ベクトルを本番アプリ用JSONとして書き出す
+$('#exportRefs').onclick = async () => {
+  if (!refs.length) { flash('先に基準写真を登録してください'); return; }
+  if (!await ensureModel()) { flash('照合エンジンを読み込めませんでした'); return; }
+  flash('ベクトル計算中…');
+  const embeddings = [];
+  for (const r of refs) {
+    const e = await refEmb(r.thumb);
+    embeddings.push(e.map(x => Math.round(x * 100000) / 100000));
+  }
+  const blob = new Blob([JSON.stringify({ embeddings })], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'refs.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  flash('ダウンロードしました(' + embeddings.length + '本)');
+};
+
 let busy = false;
 async function handleCanvas(canvas) {
   if (busy) return;

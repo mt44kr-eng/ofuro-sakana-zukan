@@ -105,28 +105,8 @@ $('#iceSvg').addEventListener('click', () => {
 function reveal() {
   $('#iceWrap').classList.add('hidden');
   $('#reveal').classList.remove('hidden');
-  burst();
+  App.burst(document.querySelector('#demo .stage'));
   speak();
-}
-
-// 水玉バースト
-function burst() {
-  const stage = document.querySelector('.stage');
-  const colors = ['#ffffff', '#ffe082', '#ffab91', '#81d4fa', '#a5d6a7', '#f8bbd0'];
-  for (let i = 0; i < 14; i++) {
-    const s = document.createElement('span');
-    s.className = 'spark';
-    const size = 8 + Math.round(Math.random() * 12);
-    s.style.width = s.style.height = size + 'px';
-    s.style.background = colors[i % colors.length];
-    const a = i / 14 * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
-    const d = 90 + Math.random() * 70;
-    s.style.setProperty('--dx', Math.round(Math.cos(a) * d) + 'px');
-    s.style.setProperty('--dy', Math.round(Math.sin(a) * d) + 'px');
-    s.style.animationDelay = (i * 0.02) + 's';
-    stage.appendChild(s);
-    setTimeout(() => s.remove(), 1300);
-  }
 }
 
 // 「みつけた！」共通クリップ→ドクターフィッシュのセリフを連続再生
